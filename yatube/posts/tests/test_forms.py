@@ -157,3 +157,24 @@ class PostFormTests(TestCase):
                 text='Тестовый комментарий',
             ).exists()
         )
+
+    def test_add_comment_guest_client(self):
+        comments_count = Comment.objects.count()
+        form_data = {
+            'text': 'Тестовый комментарий',
+        }
+        response = self.guest_client.post(
+            reverse(
+                'posts:add_comment',
+                args=(self.post.id,)
+            ),
+            data=form_data,
+            follow=True
+        )
+        self.assertRedirects(response, '/auth/login/?next=/posts/1/comment/')
+        self.assertEqual(Comment.objects.count(), comments_count)
+        self.assertFalse(
+            Comment.objects.filter(
+                text='Тестовый комментарий',
+            ).exists()
+        )

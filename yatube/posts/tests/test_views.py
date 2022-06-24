@@ -285,9 +285,19 @@ class PostPagesTests(TestCase):
             self.post.group.title
         )
 
-    def test_added_comment_in_page(self):
+    def test_added_comment_in_page_authorized_client(self):
         response = (
             self.authorized_client.
+            get(reverse('posts:post_detail', args=(self.post.id,)))
+        )
+        self.assertEqual(
+            response.context['comments'][0].text,
+            self.comment.text
+        )
+
+    def test_added_comment_in_page_guest_client(self):
+        response = (
+            self.guest_client.
             get(reverse('posts:post_detail', args=(self.post.id,)))
         )
         self.assertEqual(
@@ -333,6 +343,7 @@ class TestFollowViews(TestCase):
         super().setUpClass()
         cls.user = User.objects.create_user(username='Zhenya')
         cls.user_2 = User.objects.create_user(username='Q')
+        cls.guest_client = Client()
         cls.authorized_client = Client()
         cls.authorized_client.force_login(cls.user_2)
         cls.group = Group.objects.create(
@@ -373,6 +384,38 @@ class TestFollowViews(TestCase):
             'posts:profile',
             args=(self.user,)
         ))
+
+    def test_follow_for_guest(self):
+        response = self.guest_client.get(
+            reverse('posts:profile_follow', args=(self.user,))
+        )
+        self.assertFalse(
+            Follow.objects.filter(
+                user=self.user_2, author=self.user
+            ).exists()
+        )
+        self.assertRedirects(
+            response,
+            '/auth/login/?next=/profile/Zhenya/follow/'
+        )
+
+    def test_unfollow_for_guest(self):
+        Follow.objects.create(
+            user=self.user_2,
+            author=self.user,
+        )
+        response = self.guest_client.get(
+            reverse('posts:profile_unfollow', args=(self.user,))
+        )
+        self.assertTrue(
+            Follow.objects.filter(
+                user=self.user_2, author=self.user
+            ).exists()
+        )
+        self.assertRedirects(
+            response,
+            '/auth/login/?next=/profile/Zhenya/unfollow/'
+        )
 
     def test_new_content_for_follower_and_unfollower(self):
         self.follower = Follow.objects.create(

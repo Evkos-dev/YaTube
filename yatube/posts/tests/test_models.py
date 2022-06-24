@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from ..models import Group, Post
+from ..models import Group, Post, Comment
 
 User = get_user_model()
 
@@ -22,6 +22,11 @@ class PostModelTest(TestCase):
             author=cls.user,
             text='Пост для проверки моделей',
         )
+        cls.comment = Comment.objects.create(
+            post=cls.post,
+            author=cls.user,
+            text='Тестовый коммент',
+        )
 
     def test_model_post_have_correct_str(self):
         """Проверяем, что у модели post корректно работает __str__."""
@@ -34,3 +39,8 @@ class PostModelTest(TestCase):
         group = PostModelTest.group
         expected_group_str = group.title
         self.assertEqual(expected_group_str, str(group))
+
+    def test_model_comment_have_correct_str(self):
+        comment = PostModelTest.comment
+        expected_comment_str = comment.text[:symbols_text]
+        self.assertEqual(expected_comment_str, str(comment))

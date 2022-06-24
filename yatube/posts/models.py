@@ -75,6 +75,9 @@ class Comment(CreatedModel):
         validators=[validate_not_empty]
     )
 
+    def __str__(self):
+        return self.text[:15]
+
 
 class Follow(models.Model):
     user = models.ForeignKey(
@@ -87,3 +90,15 @@ class Follow(models.Model):
         on_delete=models.CASCADE,
         related_name='following',
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'author'],
+                name='unique_following'
+            ),
+            models.CheckConstraint(
+                check=~models.Q(user=models.F('author')),
+                name='cant_follow_urself'
+            )
+        ]
