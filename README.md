@@ -1,3 +1,43 @@
-# hw05_final
+# Социальная сеть YaTube
+### Описание проекта
+Проект создан в рамках учебного курса Яндекс.Практикум на **Django**.
 
-[![CI](https://github.com/yandex-praktikum/hw05_final/actions/workflows/python-app.yml/badge.svg?branch=master)](https://github.com/yandex-praktikum/hw05_final/actions/workflows/python-app.yml)
+В данном проекте реализованы следующие функции:
+
+- Регистрация пользователя (восстановление и смена пароля, с подтверждением по email)
+- Посты (написание, удаление или изменение написанного поста для автора)
+- Группы для распределения постов
+- Написание комментариев к постам
+- Подписка на авторов
+
+### Как запустить проект:
+
+Клонировать репозиторий и перейти в него в командной строке:
+
+`git clone https://github.com/YaTube.git`
+
+`cd YaTube`
+
+Cоздать и активировать виртуальное окружение:
+
+`python3 -m venv venv`
+
+`source venv/Scripts/activate`
+
+Установить зависимости из файла requirements.txt:
+
+`python -m pip install --upgrade pip`
+
+`pip install -r requirements.txt`
+
+Выполнить миграции:
+
+`python3 manage.py migrate`
+
+Запустить проект:
+
+`python3 manage.py runserver`
+
+### Об авторе
+
+Я студент Яндекс.Практикума, обучаюсь Backend разработке на Python. Этот проект - учебный, в котором я реализовал социальную сеть на Django.
